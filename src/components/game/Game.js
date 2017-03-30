@@ -8,6 +8,7 @@ import farmer from "../../images/farmer.png";
 import './game.css';
 import Character from "../../utils/character";
 import Stats from "../../utils/stats";
+import Encounter from "../encounter/Encounter";
 
 
 class Game extends Component {
@@ -49,6 +50,7 @@ class Game extends Component {
 	render(){
 		return (
 			<div className="game">
+				<Encounter />
 				<div className="icon">
 					<div className="action sword" title="Sword Attack" onClick={this.swordAttack.bind(this)} />
 					<div className="action kick" title="Kick" onClick={this.kickAttack.bind(this)} />

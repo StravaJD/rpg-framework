@@ -1,0 +1,97 @@
+body {
+	background-color: black;
+	font-family: "Georgia", serif;
+}
+
+ul {
+	list-style: none;
+	margin: auto;
+	padding: 2px;
+}
+
+.sprite {
+	padding-top: 10%;
+	padding-left: 3%;
+	display: inline-block;
+}
+
+.icon {
+	padding-top: 10%;
+	padding-left: 25%;
+	float: left;
+}
+
+.action {
+	cursor: pointer;
+}
+
+.sword {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/sword.png");
+}
+
+.sword:hover {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/sword2.png");
+}
+
+.kick {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/kick.png");
+}
+
+.kick:hover {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/kick2.png");
+}
+.magic {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/magic.png");
+}
+
+.magic:hover {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/magic2.png");
+}
+.knapsack {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/knapsack.png");
+}
+
+.knapsack:hover {
+	width: 64px;
+	height: 64px;
+	background-image: url("../../images/knapsack2.png");
+}
+
+.swordAction, .kickAction, .magicAction, .itemAction {
+	cursor: pointer;
+}
+
+.info {
+	border: solid;
+	border-width: 2px;
+	border-color: white;
+	margin-top: 5px;
+	margin-left: 37%;
+	color: white;
+	width: 25%;
+	height: 20%;
+	overflow: auto;
+}
+
+.healthBar {
+	background-color: red;
+	height: 15px;
+}
+
+.healthOutline{
+	background-color: gray;
+}

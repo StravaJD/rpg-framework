@@ -49,7 +49,7 @@ export default function reducer(state = initialState, action) {
       let tileToMoveTo = getTile(state, position)
       if(!tileToMoveTo.wall) {
         let newState = Object.assign({}, state);
-        newState.character[action.characterId].position = position;
+        newState.characters[action.characterId].position = position;
         return newState;
       } else {
         return state;
@@ -61,7 +61,7 @@ export default function reducer(state = initialState, action) {
       let tileToMoveTo = getTile(state, position)
       if(!tileToMoveTo.wall) {
         let newState = Object.assign({}, state);
-        newState.character[action.characterId].position = position;
+        newState.characters[action.characterId].position = position;
         return newState;
       } else {
         return state;
@@ -73,7 +73,7 @@ export default function reducer(state = initialState, action) {
       let tileToMoveTo = getTile(state, position)
       if(!tileToMoveTo.wall) {
         let newState = Object.assign({}, state);
-        newState.character[action.characterId].position = position;
+        newState.characters[action.characterId].position = position;
         return newState;
       } else {
         return state;
@@ -85,7 +85,7 @@ export default function reducer(state = initialState, action) {
       let tileToMoveTo = getTile(state, position)
       if(!tileToMoveTo.wall) {
         let newState = Object.assign({}, state);
-        newState.character[action.characterId].position = position;
+        newState.characters[action.characterId].position = position;
         return newState;
       } else {
         return state;
@@ -97,7 +97,7 @@ export default function reducer(state = initialState, action) {
 };
 
 export const getTile = (state, position) => {
-  return Object.assigin({}, state.world[position.dim][position.y][position.x]);
+  return Object.assign({}, state.world[position.dim][position.y][position.x]);
 }
 
 export const getCharacter = (state, id) => {

@@ -4,7 +4,7 @@ import { moveUp, moveRight, moveDown, moveLeft } from '../../actions/characterAc
 
 const Tile = ({ x, y, wall }) => (
   <div>
-   { wall }
+   <span>{ `${wall}` }</span>
   </div>
 );
 
@@ -29,7 +29,7 @@ class World extends Component {
   
   render() {
     let { worldMap } = this.props;
-    return <div tabIndex="0" keyUp={this.handleMove.bind(this)}>
+    return <div tabIndex="0" onKeyUp={this.handleMove.bind(this)}>
       {
         worldMap.map((row, y) => row.map((tile, x) => (
           <Tile { ...tile } x={ x } y={ y } />
@@ -50,7 +50,7 @@ const mapDispatchToProps = dispatch => {
     moveUp: (id) => dispatch(moveUp(id)),
     moveRight: (id) => dispatch(moveRight(id)),
     moveDown: (id) => dispatch(moveDown(id)),
-    moveLeft: (id) => dispatch(moveLeft(id)),
+    moveLeft: (id) => dispatch(moveLeft(id))
   }
 };
 

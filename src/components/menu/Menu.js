@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { attack } from '../../actions/characterActions';
 
-import './game.css';
+import '../game/game.css';
 
 class BattleMenuComponent extends Component {
   render() {
@@ -15,7 +16,7 @@ class BattleMenuComponent extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    attack: dispatch(attack('hero', 'farmer'))
+    attack: () => {dispatch(attack('hero', 'farmer'))}
   }
 }
 

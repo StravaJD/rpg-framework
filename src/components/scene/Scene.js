@@ -3,7 +3,12 @@ import React, { Component } from 'react';
 
 class Scene extends Component {
   render(){
-    return <img className="Scene-Background" src={this.props.image} />
+    return (
+      <div>
+        <img className="Scene-Background" src={this.props.image} />
+        { this.props.children }
+      </div>
+    )
   }
 }
 

@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
+import { attack } from '../../actions/characterActions';
 
-class Menu extends Component {
+import './game.css';
+
+class BattleMenuComponent extends Component {
   render() {
     return (
       <div>
-    
+        <div className="action sword" title="Sword Attack" onClick={ this.props.attack } />
       </div>
     );
   }
 }
 
-export default Menu;
+const mapDispatchToProps = dispatch => {
+  return {
+    attack: dispatch(attack('hero', 'farmer'))
+  }
+}
+
+export const BattleMenu = connect(null, mapDispatchToProps)(BattleMenuComponent);

@@ -9,6 +9,7 @@ import './game.css';
 import Character from "../../utils/character";
 import Stats from "../../utils/stats";
 import Encounter from "../encounter/Encounter";
+import World from "../world/World";
 
 
 class Game extends Component {
@@ -50,6 +51,7 @@ class Game extends Component {
 	render(){
 		return (
 			<div className="game">
+				<World />
 				<Encounter />
 				<div className="icon">
 					<div className="action sword" title="Sword Attack" onClick={this.swordAttack.bind(this)} />

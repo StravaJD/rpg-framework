@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/App';
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import appReducers from './reducers/reducers';
+import { createStore, applyMiddleware } from 'redux'
+
+import appReducers from './reducers';
+import tileTrigger from './middleware/tileTrigger';
 
 import './index.css';
 
 
-let store = createStore(appReducers);
+let store = createStore(appReducers, applyMiddleware(tileTrigger));
 
 store.subscribe(()=>{
   console.log(store.getState());

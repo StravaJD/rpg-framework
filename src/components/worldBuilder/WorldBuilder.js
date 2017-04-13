@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { selectTool, selectDim, setTileOptions, addDim, removeDim, addTile, removeTile } from '../../actions/worldBuilderActions';
 import { getTools, getTiles, getDims, getTileArray } from '../../reducers/worldBuilderReducers';
 import tools from '../../utils/Tools';
+import tileImages from '../../images/tiles';
+
 import './WorldBuilder.css';
 
 /*
@@ -22,8 +24,14 @@ class CanvasContainer extends Component {
   }
 
   drawTile(tile, ctx){
-    ctx.fillStyle = tile.tile.wall ? '#444444' : '#DDDDDD';
-    ctx.fillRect(tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+    if(!tile.tile.icon || tile.tile.icon === ""){
+      ctx.fillStyle = tile.tile.wall ? '#444444' : '#DDDDDD';
+      ctx.fillRect(tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+    } else {
+      let tileImage = new Image();
+      tileImage.src = tile.tile.icon;
+      ctx.drawImage(tileImage, tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+    }
   }
 
   registerCanvas(el) {
@@ -122,12 +130,17 @@ const TileOptions = ({ tileOptions, setTileOptions }) =>
       />
     </label>
     <label>
-      tile:
-      <img />
-      <select>
-        <option>
-          lol
-        </option>
+      <img src={tileOptions.icon}/>
+      <select
+        onChange={(e) => {
+          tileOptions.icon = e.target.value;
+          setTileOptions(tileOptions);
+        }}
+      >
+        <option value="">Select a tile image</option>
+        {
+          Object.keys(tileImages).map(imageName => <option value={ tileImages[imageName] }>{ imageName }</option> ) 
+        }
       </select>
     </label>
   </div>;

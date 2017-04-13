@@ -17,7 +17,7 @@ export function selectDim(dim) {
 export function setTileOptions(tileOptions) {
   return {
     type: SET_TILE_OPTIONS,
-    tileOptions
+    tileOptions: { ...tileOptions }
   }
 }
 

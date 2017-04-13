@@ -1,10 +1,8 @@
 import { SELECT_TOOL, SELECT_DIM, SET_TILE_OPTIONS, ADD_DIM, REMOVE_DIM, ADD_TILE, REMOVE_TILE } from '../utils/actionTypes';
 import { set, remove } from '../utils/objUtil';
+import tools from '../utils/Tools';
 const defaultWorldBuilder = {
-  tools: [
-    {id:'brush'},
-    {id:'rectangle'}
-  ],
+  tools: Object.keys(tools).map(toolName => ({id: toolName})),
   selectedTool: {id:'brush'},
   selectedDim: undefined,
   tileOptions: {
@@ -14,6 +12,7 @@ const defaultWorldBuilder = {
 };
 
 export default function worldBuilder(worldBuilder = defaultWorldBuilder, action) {
+  let newState;
   switch(action.type) {
     case SELECT_TOOL:
       return set(`selectedTool`, {...worldBuilder}, action.tool);
@@ -26,13 +25,17 @@ export default function worldBuilder(worldBuilder = defaultWorldBuilder, action)
     case SET_TILE_OPTIONS:
       return set(`tileOptions`, {...worldBuilder}, action.tileOptions);
     case ADD_TILE:
-      let newState = { ...worldBuilder };
+      newState = { ...worldBuilder };
       for(let offsetY = 0; offsetY <= action.height; offsetY++)
         for(let offsetX = 0; offsetX <= action.width; offsetX++)
           newState = set(`tiles.${action.dim.name}.${action.y + offsetY}.${action.x + offsetX}`, newState, action.tile);
       return newState;
     case REMOVE_TILE:
-      return remove(`tiles.${action.dim.name}.${action.y}.${action.x}`, { ...worldBuilder });
+      newState = { ...worldBuilder };
+      for(let offsetY = 0; offsetY <= action.height; offsetY++)
+        for(let offsetX = 0; offsetX <= action.width; offsetX++)
+          newState = remove(`tiles.${action.dim.name}.${action.y}.${action.x}`, newState);
+      return newState;
     default:
       return worldBuilder;
   }

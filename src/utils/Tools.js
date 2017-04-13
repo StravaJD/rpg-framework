@@ -21,5 +21,15 @@ export default {
       
       addTile( tile, dim, minY, minX, width, height);
     }
+  },
+  eraser: {
+    onMouseDown(tile, dim, y, x, removeTile) {
+      removeTile( dim, y, x );
+    },
+    onMouseMove(tile, dim, y, x, isMouseDown, removeTile) {
+      if(isMouseDown){
+        removeTile( dim, y, x );
+      }
+    }
   }
 };

@@ -47,12 +47,13 @@ export function addTile( tile, dim, y, x, width = 0 , height = 0 ){
   };
 }
 
-export function removeTile(tile, dim, y, x){
+export function removeTile(dim, y, x, width = 0 , height = 0 ){
   return {
     type: REMOVE_TILE,
     dim,
     y,
     x,
-    tile
+    width,
+    height
   };
 }

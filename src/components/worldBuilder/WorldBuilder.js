@@ -3,16 +3,26 @@ import { connect } from 'react-redux';
 import { selectTool, selectDim, setTileOptions, addDim, removeDim, addTile, removeTile } from '../../actions/worldBuilderActions';
 import { getTools, getTiles, getDims, getTileArray } from '../../reducers/worldBuilderReducers';
 import tools from '../../utils/Tools';
+import { get } from '../../utils/objUtil';
 import tileImages from '../../images/tiles';
 
 import './WorldBuilder.css';
 
 /*
-TODO: implement tile options; wall is done, now add images
-Add an eraser tool
+TODO: Add a dropper / copy tool
 Add pan and zoom features
 abstract the tools a bit more to make them easier to write
  */
+
+const tileImageElements = Object.keys(tileImages)
+  .map(imageName => {
+    let imageElement = new Image();
+    imageElement.src = tileImages[imageName];
+    return {imageElement, imageName}
+  }).reduce((acc, image) => {
+    acc[image.imageName] = image.imageElement;
+    return acc;
+  }, {});
 
 class CanvasContainer extends Component {
   constructor(props){
@@ -28,9 +38,7 @@ class CanvasContainer extends Component {
       ctx.fillStyle = tile.tile.wall ? '#444444' : '#DDDDDD';
       ctx.fillRect(tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
     } else {
-      let tileImage = new Image();
-      tileImage.src = tile.tile.icon;
-      ctx.drawImage(tileImage, tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+      ctx.drawImage(tileImageElements[tile.tile.icon], tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
     }
   }
 
@@ -56,7 +64,8 @@ class CanvasContainer extends Component {
 
     if(tools[this.props.selectedTool.id].onMouseDown) {
       tools[this.props.selectedTool.id]
-        .onMouseDown(this.props.tileOptions, this.props.selectedDim, y, x, this.props.addTile);
+        .onMouseDown(this.props.tileOptions, this.props.selectedDim, y, x,
+          this.props.selectedTool.id !== 'eraser' ? this.props.addTile : this.props.removeTile);
     }
     this.setState({isMouseDown: true, startX: x, startY: y});
   }
@@ -68,7 +77,8 @@ class CanvasContainer extends Component {
     if(x !== this.state.currentX || y !== this.state.currentY) {
       if(tools[this.props.selectedTool.id].onMouseMove) {
         tools[this.props.selectedTool.id]
-          .onMouseMove(this.props.tileOptions, this.props.selectedDim, y, x, this.state.isMouseDown, this.props.addTile);
+          .onMouseMove(this.props.tileOptions, this.props.selectedDim, y, x, this.state.isMouseDown,
+            this.props.selectedTool.id !== 'eraser' ? this.props.addTile : this.props.removeTile);
       }
       this.setState({currentX: x, currentY: y});
     }
@@ -130,7 +140,7 @@ const TileOptions = ({ tileOptions, setTileOptions }) =>
       />
     </label>
     <label>
-      <img src={tileOptions.icon}/>
+      <img src={ get(`${tileOptions.icon}.src`, tileImageElements) }/>
       <select
         onChange={(e) => {
           tileOptions.icon = e.target.value;
@@ -139,7 +149,7 @@ const TileOptions = ({ tileOptions, setTileOptions }) =>
       >
         <option value="">Select a tile image</option>
         {
-          Object.keys(tileImages).map(imageName => <option value={ tileImages[imageName] }>{ imageName }</option> ) 
+          Object.keys(tileImages).map(imageName => <option value={ imageName }>{ imageName }</option> )
         }
       </select>
     </label>

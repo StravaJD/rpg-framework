@@ -9,8 +9,7 @@ import tileImages from '../../images/tiles';
 import './WorldBuilder.css';
 
 /*
-TODO: Add a dropper / copy tool
-Add pan and zoom features
+TODO: Add pan and zoom features
 abstract the tools a bit more to make them easier to write
  */
 
@@ -96,7 +95,8 @@ class CanvasContainer extends Component {
           x,
           startX: this.state.startX,
           startY: this.state.startY,
-          addTile: this.props.addTile
+          addTile: this.props.addTile,
+          setTileOptions: this.props.setTileOptions
         });
     }
     this.setState({isMouseDown: false, startX: undefined, startY: undefined});
@@ -137,6 +137,7 @@ const TileOptions = ({ tileOptions, setTileOptions }) =>
           tileOptions.wall = e.target.checked;
           setTileOptions(tileOptions);
         }}
+        checked={ tileOptions.wall || false }
       />
     </label>
     <label>
@@ -149,7 +150,7 @@ const TileOptions = ({ tileOptions, setTileOptions }) =>
       >
         <option value="">Select a tile image</option>
         {
-          Object.keys(tileImages).map(imageName => <option value={ imageName }>{ imageName }</option> )
+          Object.keys(tileImages).map(imageName => <option value={ imageName } selected={imageName === tileOptions.icon}>{ imageName }</option> )
         }
       </select>
     </label>
@@ -235,6 +236,7 @@ const WorldBuilder = ({ tools, selectTool, selectedTool, tileOptions, setTileOpt
       selectedDim={ selectedDim }
       selectedTool={ selectedTool }
       tileOptions={ tileOptions }
+      setTileOptions={ setTileOptions }
       addTile={ addTile }
       removeTile={ removeTile }
     />

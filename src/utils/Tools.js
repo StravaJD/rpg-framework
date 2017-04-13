@@ -31,5 +31,10 @@ export default {
         removeTile( dim, y, x );
       }
     }
+  },
+  copy: {
+    onMouseUp({dim, y, x, setTileOptions}) {
+      setTileOptions({dim, y, x});
+    }
   }
 };

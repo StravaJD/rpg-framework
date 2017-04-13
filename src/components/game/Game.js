@@ -10,12 +10,14 @@ import Character from "../../utils/character";
 import Stats from "../../utils/stats";
 import Encounter from "../encounter/Encounter";
 import World from "../world/World";
+import WorldBuilder from "../worldBuilder/WorldBuilder";
 
 
 class Game extends Component {
 	constructor(props){
 		super(props);
 		this.state={
+			view: 'world',
 			enemy:new Character("Enemy", new Stats(40, 5, 5, 5, 5)),
 			player:new Character("Hero", new Stats(40, 10, 15, 10, 5)),
 			log:[]
@@ -51,6 +53,7 @@ class Game extends Component {
 	render(){
 		return (
 			<div className="game">
+				<WorldBuilder />
 				<World />
 				<Encounter />
 				<div className="icon">
@@ -66,17 +69,17 @@ class Game extends Component {
 						<div className="healthOutline" title={this.state.player.stats.health}>
 							<div
 								className="healthBar"
-								style={({width:`${(this.state.player.stats.health/this.state.player.stats.maxHealth)*100}%`})}	
+								style={({width:`${(this.state.player.stats.health/this.state.player.stats.maxHealth)*100}%`})}
 							></div>
-						</div>					
+						</div>
 					</div>
-					
+
 					<div className="sprite">
 						<img src={farmer} title="Farmer" />
 						<div className="healthOutline" title={this.state.enemy.stats.health}>
 							<div
 								className="healthBar"
-								style={({width:`${(this.state.enemy.stats.health/this.state.enemy.stats.maxHealth)*100}%`})}	
+								style={({width:`${(this.state.enemy.stats.health/this.state.enemy.stats.maxHealth)*100}%`})}
 							></div>
 						</div>
 					</div>

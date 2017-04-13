@@ -1,0 +1,60 @@
+.ToolBox {
+  background-color: gray;
+  padding: 5px;
+}
+
+.ToolBox-Tool {
+  padding: 0 5px;
+  margin: 0 5px;
+  display: inline-block;
+}
+
+.ToolBox-Tool:hover {
+  border-bottom: solid 2px black;
+}
+
+.ToolBox-Tool.is-selected {
+  border-bottom: solid 2px black;
+}
+
+.Dimensions{
+  background-color: gray;
+  padding: 5px;
+}
+
+.Dimensions-AddDimension{
+  padding: 0 5px;
+  margin: 0 5px;
+  display: inline-block;
+}
+
+.Dimensions-AddDimension.SwitchToAdding:hover{
+  border-bottom: solid 2px black;
+}
+
+.Dimension{
+  padding: 0 5px;
+  margin: 0 5px;
+  display: inline-block;
+}
+
+.Dimension:hover {
+  border-bottom: solid 2px black;
+}
+
+.Dimension.is-selected {
+  border-bottom: solid 2px black;
+}
+
+.RemoveDimension {
+  margin: 0 5px;
+}
+
+.RemoveDimension:hover {
+  font-weight: bold;
+}
+
+.TileOptions{
+  background-color: gray;
+  padding: 5px;
+}

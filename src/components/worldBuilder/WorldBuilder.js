@@ -26,47 +26,43 @@ const tileImageElements = Object.keys(tileImages)
 class CanvasContainer extends Component {
   constructor(props){
     super(props);
-    this.state = {
-
-    };
-    this.tileSize = 64;
   }
 
   drawTile(tile, ctx){
-    let {panX=0, panY=0} = this.props.canvasOptions;
-    let x = (tile.x * this.tileSize) - panX;
-    let y = (tile.y * this.tileSize) - panY;
+    let {panX=0, panY=0, tileSize} = this.props.canvasOptions;
+    let x = (tile.x * tileSize) - panX;
+    let y = (tile.y * tileSize) - panY;
     if(!tile.tile.icon || tile.tile.icon === ""){
       ctx.fillStyle = tile.tile.wall ? '#444444' : '#DDDDDD';
-      ctx.fillRect(x, y, this.tileSize, this.tileSize);
+      ctx.fillRect(x, y, tileSize, tileSize);
     } else {
-      ctx.drawImage(tileImageElements[tile.tile.icon], x, y, this.tileSize, this.tileSize);
+      ctx.drawImage(tileImageElements[tile.tile.icon], x, y, tileSize, tileSize);
     }
   }
 
   getPositions(event) {
-    let {panX=0, panY=0} = this.props.canvasOptions;
+    let {panX=0, panY=0, tileSize} = this.props.canvasOptions;
     let x = event.pageX - event.target.offsetLeft;
     let y = event.pageY - event.target.offsetTop;
-    let tileX = Math.floor((x + panX) / this.tileSize);
-    let tileY = Math.floor((y + panY) / this.tileSize);
+    let tileX = Math.floor((x + panX) / tileSize);
+    let tileY = Math.floor((y + panY) / tileSize);
     return { x, y, tileX, tileY };
   }
 
   registerCanvas(el) {
     if(el) {
-      let {panX=0, panY=0} = this.props.canvasOptions;
+      let {panX=0, panY=0, tileSize} = this.props.canvasOptions;
       el.height = 500;
       el.width = 500;
       this.ctx = el.getContext('2d');
       this.ctx.clearRect(0, 0, el.width, el.height);
       this.props.tiles.forEach(tile => this.drawTile(tile, this.ctx));
       
-      let xGridOffset = -((panX%this.tileSize)+this.tileSize)%this.tileSize;
-      let yGridOffset = -((panY%this.tileSize)+this.tileSize)%this.tileSize;
-      let gridWidth = el.width + xGridOffset + this.tileSize;
-      let gridHeight = el.height + yGridOffset + this.tileSize;
-      for(let x=xGridOffset, y=yGridOffset; x<gridWidth || y<gridHeight; x += this.tileSize, y+= this.tileSize) {
+      let xGridOffset = -((panX%tileSize)+tileSize)%tileSize;
+      let yGridOffset = -((panY%tileSize)+tileSize)%tileSize;
+      let gridWidth = el.width + xGridOffset + tileSize;
+      let gridHeight = el.height + yGridOffset + tileSize;
+      for(let x=xGridOffset, y=yGridOffset; x<gridWidth || y<gridHeight; x += tileSize, y+= tileSize) {
         this.ctx.fillStyle = '#fff';
         this.ctx.fillRect(x, 0, 1, el.height);
         this.ctx.fillRect(0, y, el.width, 1);
@@ -103,12 +99,21 @@ class CanvasContainer extends Component {
     this.props.setCanvasOptions({ ...this.props.canvasOptions, isMouseDown: false, startX: undefined, startY: undefined});
   }
 
+  handleScroll(event) {
+    event.preventDefault();
+    let tileSize = this.props.canvasOptions.tileSize + (event.nativeEvent.deltaY > 0 ? 1 : -1);
+    if(tileSize >= 1) {
+      this.props.setCanvasOptions({...this.props.canvasOptions, tileSize});
+    }
+  }
+
   render(){
     return <canvas
       ref={ this.registerCanvas.bind(this) }
       onMouseDown={ this.handleMouseDown.bind(this) }
       onMouseMove={ this.handleMouseMove.bind(this) }
       onMouseUp={ this.handleMouseUp.bind(this) }
+      onWheel={ this.handleScroll.bind(this) }
     />
   }
 }

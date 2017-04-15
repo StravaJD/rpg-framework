@@ -8,7 +8,9 @@ const defaultWorldBuilder = {
   tileOptions: {
     wall: false
   },
-  canvasOptions: {},
+  canvasOptions: {
+    tileSize: 32
+  },
   tiles: {}
 };
 

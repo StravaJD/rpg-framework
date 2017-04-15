@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectTool, selectDim, setTileOptions, addDim, removeDim, addTile, removeTile } from '../../actions/worldBuilderActions';
+import { selectTool, selectDim, setTileOptions, addDim, removeDim, addTile, removeTile, setCanvasOptions } from '../../actions/worldBuilderActions';
 import { getTools, getTiles, getDims, getTileArray } from '../../reducers/worldBuilderReducers';
 import tools from '../../utils/Tools';
 import { get } from '../../utils/objUtil';
@@ -33,73 +33,74 @@ class CanvasContainer extends Component {
   }
 
   drawTile(tile, ctx){
+    let {panX=0, panY=0} = this.props.canvasOptions;
+    let x = (tile.x * this.tileSize) - panX;
+    let y = (tile.y * this.tileSize) - panY;
     if(!tile.tile.icon || tile.tile.icon === ""){
       ctx.fillStyle = tile.tile.wall ? '#444444' : '#DDDDDD';
-      ctx.fillRect(tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+      ctx.fillRect(x, y, this.tileSize, this.tileSize);
     } else {
-      ctx.drawImage(tileImageElements[tile.tile.icon], tile.x*this.tileSize, tile.y*this.tileSize, this.tileSize, this.tileSize);
+      ctx.drawImage(tileImageElements[tile.tile.icon], x, y, this.tileSize, this.tileSize);
     }
+  }
+
+  getPositions(event) {
+    let {panX=0, panY=0} = this.props.canvasOptions;
+    let x = event.pageX - event.target.offsetLeft;
+    let y = event.pageY - event.target.offsetTop;
+    let tileX = Math.floor((x + panX) / this.tileSize);
+    let tileY = Math.floor((y + panY) / this.tileSize);
+    return { x, y, tileX, tileY };
   }
 
   registerCanvas(el) {
     if(el) {
+      let {panX=0, panY=0} = this.props.canvasOptions;
       el.height = 500;
       el.width = 500;
       this.ctx = el.getContext('2d');
       this.ctx.clearRect(0, 0, el.width, el.height);
       this.props.tiles.forEach(tile => this.drawTile(tile, this.ctx));
-
-      for(let i=0; i<el.width; i+= this.tileSize){
+      
+      let xGridOffset = -((panX%this.tileSize)+this.tileSize)%this.tileSize;
+      let yGridOffset = -((panY%this.tileSize)+this.tileSize)%this.tileSize;
+      let gridWidth = el.width + xGridOffset + this.tileSize;
+      let gridHeight = el.height + yGridOffset + this.tileSize;
+      for(let x=xGridOffset, y=yGridOffset; x<gridWidth || y<gridHeight; x += this.tileSize, y+= this.tileSize) {
         this.ctx.fillStyle = '#fff';
-        this.ctx.fillRect(i, 0, 1, el.height);
-        this.ctx.fillRect(0, i, el.width, 1);
+        this.ctx.fillRect(x, 0, 1, el.height);
+        this.ctx.fillRect(0, y, el.width, 1);
       }
     }
   }
 
   handleMouseDown(event){
-    let x = Math.floor((event.pageX - event.target.offsetLeft) / this.tileSize);
-    let y = Math.floor((event.pageY - event.target.offsetTop) / this.tileSize);
+    let {x, y, tileX, tileY} = this.getPositions(event);
 
     if(tools[this.props.selectedTool.id].onMouseDown) {
       tools[this.props.selectedTool.id]
-        .onMouseDown(this.props.tileOptions, this.props.selectedDim, y, x,
-          this.props.selectedTool.id !== 'eraser' ? this.props.addTile : this.props.removeTile);
+        .onMouseDown({ ...this.props, ...this.props.canvasOptions, tileX, tileY, x, y });
     }
-    this.setState({isMouseDown: true, startX: x, startY: y});
+    
+    this.props.setCanvasOptions({ ...this.props.canvasOptions, isMouseDown: true, startX: tileX, startY: tileY});
   }
 
   handleMouseMove(event){
-    let x = Math.floor((event.pageX - event.target.offsetLeft) / this.tileSize);
-    let y = Math.floor((event.pageY - event.target.offsetTop) / this.tileSize);
-
-    if(x !== this.state.currentX || y !== this.state.currentY) {
-      if(tools[this.props.selectedTool.id].onMouseMove) {
-        tools[this.props.selectedTool.id]
-          .onMouseMove(this.props.tileOptions, this.props.selectedDim, y, x, this.state.isMouseDown,
-            this.props.selectedTool.id !== 'eraser' ? this.props.addTile : this.props.removeTile);
-      }
-      this.setState({currentX: x, currentY: y});
+    let {x, y, tileX, tileY} = this.getPositions(event);
+    
+    if(tools[this.props.selectedTool.id].onMouseMove) {
+      tools[this.props.selectedTool.id]
+        .onMouseMove({ ...this.props, ...this.props.canvasOptions, tileX, tileY, x, y });
     }
   }
 
   handleMouseUp(event){
-    let x = Math.floor((event.pageX - event.target.offsetLeft) / this.tileSize);
-    let y = Math.floor((event.pageY - event.target.offsetTop) / this.tileSize);
+    let {x, y, tileX, tileY} = this.getPositions(event);
     if(tools[this.props.selectedTool.id].onMouseUp) {
       tools[this.props.selectedTool.id]
-        .onMouseUp({
-          tile: this.props.tileOptions,
-          dim: this.props.selectedDim,
-          y,
-          x,
-          startX: this.state.startX,
-          startY: this.state.startY,
-          addTile: this.props.addTile,
-          setTileOptions: this.props.setTileOptions
-        });
+        .onMouseUp({ ...this.props, ...this.props.canvasOptions, tileX, tileY, x, y });
     }
-    this.setState({isMouseDown: false, startX: undefined, startY: undefined});
+    this.props.setCanvasOptions({ ...this.props.canvasOptions, isMouseDown: false, startX: undefined, startY: undefined});
   }
 
   render(){
@@ -213,32 +214,34 @@ class AddDimension extends Component {
   }
 }
 
-const WorldBuilder = ({ tools, selectTool, selectedTool, tileOptions, setTileOptions, selectDim, selectedDim, addDim, removeDim, tiles, addTile, removeTile }) =>
+const WorldBuilder = (props) =>
   <div className="WorldBuilder">
     <ToolBox
-      tools={ tools }
-      selectedTool={ selectedTool }
-      selectTool={ selectTool }
+      tools={ props.tools }
+      selectedTool={ props.selectedTool }
+      selectTool={ props.selectTool }
     />
     <TileOptions
-      tileOptions={ tileOptions }
-      setTileOptions={ setTileOptions }
+      tileOptions={ props.tileOptions }
+      setTileOptions={ props.setTileOptions }
     />
     <Dimensions
-      selectedDim={ selectedDim }
-      selectDim={ selectDim }
-      addDim={ addDim }
-      removeDim={ removeDim }
-      dims={getDims(tiles)}
+      selectedDim={ props.selectedDim }
+      selectDim={ props.selectDim }
+      addDim={ props.addDim }
+      removeDim={ props.removeDim }
+      dims={ getDims(props.tiles) }
     />
     <CanvasContainer
-      tiles={ getTileArray(tiles, selectedDim) }
-      selectedDim={ selectedDim }
-      selectedTool={ selectedTool }
-      tileOptions={ tileOptions }
-      setTileOptions={ setTileOptions }
-      addTile={ addTile }
-      removeTile={ removeTile }
+      tiles={ getTileArray(props.tiles, props.selectedDim) }
+      selectedDim={ props.selectedDim }
+      selectedTool={ props.selectedTool }
+      tileOptions={ props.tileOptions }
+      setTileOptions={ props.setTileOptions }
+      addTile={ props.addTile }
+      removeTile={ props.removeTile }
+      setCanvasOptions={ props.setCanvasOptions }
+      canvasOptions={ props.canvasOptions }
     />
   </div>;
 
@@ -248,18 +251,20 @@ const mapStateToProps = state => {
     selectedTool: state.worldBuilder.selectedTool,
     selectedDim: state.worldBuilder.selectedDim,
     tileOptions: state.worldBuilder.tileOptions,
-    tiles: getTiles(state)
+    tiles: getTiles(state),
+    canvasOptions: state.worldBuilder.canvasOptions
   };
 };
 
 const mapDispatchToProps = {
-    selectTool,
-    selectDim,
-    setTileOptions,
-    addDim,
-    removeDim,
-    addTile,
-    removeTile
+  selectTool,
+  selectDim,
+  setTileOptions,
+  addDim,
+  removeDim,
+  addTile,
+  removeTile,
+  setCanvasOptions
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorldBuilder);

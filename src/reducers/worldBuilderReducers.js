@@ -1,4 +1,4 @@
-import { SELECT_TOOL, SELECT_DIM, SET_TILE_OPTIONS, ADD_DIM, REMOVE_DIM, ADD_TILE, REMOVE_TILE } from '../utils/actionTypes';
+import { SELECT_TOOL, SELECT_DIM, SET_TILE_OPTIONS, ADD_DIM, REMOVE_DIM, ADD_TILE, REMOVE_TILE, SET_CANVAS_OPTIONS } from '../utils/actionTypes';
 import { set, remove, get } from '../utils/objUtil';
 import tools from '../utils/Tools';
 const defaultWorldBuilder = {
@@ -8,6 +8,7 @@ const defaultWorldBuilder = {
   tileOptions: {
     wall: false
   },
+  canvasOptions: {},
   tiles: {}
 };
 
@@ -44,6 +45,8 @@ export default function worldBuilder(worldBuilder = defaultWorldBuilder, action)
         for(let offsetX = 0; offsetX <= action.width; offsetX++)
           newState = remove(`tiles.${action.dim.name}.${action.y}.${action.x}`, newState);
       return newState;
+    case SET_CANVAS_OPTIONS:
+      return set(`canvasOptions`, {...worldBuilder}, action.canvasOptions);
     default:
       return worldBuilder;
   }
@@ -64,8 +67,8 @@ export const getTileArray = (tiles, selectedDim) => {
     Object.keys(tiles[selectedDim.name]).forEach(y => Object.keys(tiles[selectedDim.name][y]).forEach(x =>
       tileArray.push({
         dim: selectedDim.name,
-        y,
-        x,
+        y: parseInt(y),
+        x: parseInt(x),
         tile: tiles[selectedDim.name][y][x]
       })
     ))

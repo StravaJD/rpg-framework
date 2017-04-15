@@ -12,3 +12,4 @@ export const ADD_DIM = 'ADD_DIM';
 export const REMOVE_DIM = 'REMOVE_DIM';
 export const ADD_TILE = 'ADD_TILE';
 export const REMOVE_TILE = 'REMOVE_TILE';
+export const SET_CANVAS_OPTIONS = 'SET_CANVAS_OPTIONS';

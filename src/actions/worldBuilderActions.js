@@ -1,4 +1,4 @@
-import { SELECT_TOOL, SELECT_DIM, SET_TILE_OPTIONS, ADD_DIM, REMOVE_DIM, ADD_TILE, REMOVE_TILE } from '../utils/actionTypes';
+import { SELECT_TOOL, SELECT_DIM, SET_TILE_OPTIONS, ADD_DIM, REMOVE_DIM, ADD_TILE, REMOVE_TILE, SET_CANVAS_OPTIONS } from '../utils/actionTypes';
 
 export function selectTool(tool){
   return{
@@ -56,4 +56,11 @@ export function removeTile(dim, y, x, width = 0 , height = 0 ){
     width,
     height
   };
+}
+
+export function setCanvasOptions(canvasOptions) {
+  return {
+    type: SET_CANVAS_OPTIONS,
+    canvasOptions: {...canvasOptions}
+  }
 }

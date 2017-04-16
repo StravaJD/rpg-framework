@@ -35,7 +35,8 @@ export default {
   },
   copy: {
     onMouseUp({selectedDim, tileY, tileX, setTileOptions}) {
-      setTileOptions({selectedDim, tileY, tileX});
+      console.log(selectedDim, tileX, tileY);
+      setTileOptions({dim:selectedDim, y:tileY, x:tileX});
     }
   },
   pan: {
